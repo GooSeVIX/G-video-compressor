@@ -130,7 +130,7 @@ class MainWindow(QtWidgets.QMainWindow):
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(
             self,
             "Выберите файл",
-            "c:\\",
+            "/",
             "Видео (*.mp4 *.avi *.mkv *.webm *.mov);;Все файлы (*)"
         )
         if file_name:
