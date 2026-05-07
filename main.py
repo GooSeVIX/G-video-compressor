@@ -5,7 +5,7 @@ import subprocess
 import shutil
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRegExp, QObject, pyqtSignal, QThread
-from PyQt5.QtGui import QIcon, QRegExpValidator
+from PyQt5.QtGui import QIcon, QRegExpValidator, QDragEnterEvent, QDropEvent
 from GUI import Ui_Window
 import ffmpeg
 import datetime
@@ -94,6 +94,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if icon_path:
             self.setWindowIcon(QIcon(icon_path))
         self.setFixedSize(self.size())
+        self.setAcceptDrops(True)
 
         filename_mask = QRegExpValidator(QRegExp("[^/\\\\:*?\"<>|]*"))
         self.ui.fileName.setValidator(filename_mask)
@@ -112,6 +113,17 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.filePath.textChanged.connect(self.check_compressB_enabled)
         self.ui.compressB.clicked.connect(self.compress)
         self.check_compressB_enabled()
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.acceptProposedAction()
+
+    def dropEvent(self, event: QDropEvent):
+        urls = event.mimeData().urls()
+        if urls:
+            file_path = urls[0].toLocalFile()
+            if os.path.isfile(file_path):
+                self.ui.filePath.setText(file_path)
 
     # Кнопка Обзор
     def researchB_clicked(self):
